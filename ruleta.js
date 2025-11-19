@@ -83,7 +83,7 @@ let panelesObjeto = [
         
     },
     {
-        frase: "Kaisen, Kanban y 5S",
+        frase: "Kaisen Kanban y 5S",
         pista: "Metodologias de optimizacion",
         resuelto : false,
         letrasIntroducidas : [],
