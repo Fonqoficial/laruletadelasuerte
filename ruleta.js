@@ -73,7 +73,7 @@ let panelesObjeto = [
         puntuacionJugadorTres : 0        
     } ,
     {
-        frase: "Recepcion, Almacenamiento y Expedicion",
+        frase: "Recepcion Almacenamiento y Expedicion",
         pista: "Almacen",
         resuelto : false,
         letrasIntroducidas : [],
@@ -92,7 +92,7 @@ let panelesObjeto = [
         puntuacionJugadorTres : 0
     },
     {
-        frase: "Cross docking, centralizado y regional",
+        frase: "Cross docking Centralizado y Regional",
         pista: "Tipos de almacen",
         resuelto : false,
         letrasIntroducidas : [],
@@ -101,7 +101,7 @@ let panelesObjeto = [
         puntuacionJugadorTres : 0
     },
     {
-        frase: "cobertura, obsolescancia y ruptura de stock",
+        frase: "cobertura obsolescancia y ruptura de stock",
         pista: "indicadores de almacen",
         resuelto : false,
         letrasIntroducidas : [],
@@ -111,7 +111,7 @@ let panelesObjeto = [
     },
 
     {
-        frase: "terrestres, aereos y multimodales",
+        frase: "terrestres aereos y multimodales",
         pista: "tipos de transporte",
         resuelto : false,
         letrasIntroducidas : [],
