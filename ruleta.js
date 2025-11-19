@@ -90,6 +90,34 @@ let panelesObjeto = [
         puntuacionJugadorUno : 0,
         puntuacionJugadorDos : 0,
         puntuacionJugadorTres : 0
+    },
+    {
+        frase: "Cross docking, centralizado y regional",
+        pista: "Tipos de almacen",
+        resuelto : false,
+        letrasIntroducidas : [],
+        puntuacionJugadorUno : 0,
+        puntuacionJugadorDos : 0,
+        puntuacionJugadorTres : 0
+    },
+    {
+        frase: "cobertura, obsolescancia y ruptura de stock",
+        pista: "indicadores de almacen",
+        resuelto : false,
+        letrasIntroducidas : [],
+        puntuacionJugadorUno : 0,
+        puntuacionJugadorDos : 0,
+        puntuacionJugadorTres : 0
+    },
+
+    {
+        frase: "terrestres, aereos y multimodales",
+        pista: "tipos de transporte",
+        resuelto : false,
+        letrasIntroducidas : [],
+        puntuacionJugadorUno : 0,
+        puntuacionJugadorDos : 0,
+        puntuacionJugadorTres : 0
     }
 ]
 
