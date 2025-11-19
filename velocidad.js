@@ -26,67 +26,25 @@ let parar = false;
 // Estilo del card del 'Jugador Velocidad'.
 document.getElementById("jugadorVelocidad").style.border = "5px solid #00b138";
 
-// En eset array de objetos almacenamos cada panel de la ruleta. En ellos tenemos la frase, el autor, si está resuelto o no, las letras que se han introducido, y las puntuaciones de cada jugador en dicho panel.
+// En eset array de objetos almacenamos cada panel de la ruleta. En ellos tenemos la frase, el , si está resuelto o no, las letras que se han introducido, y las puntuaciones de cada jugador en dicho panel.
 let panelesObjeto = [
     {
-        frase : "La libertad muere si no se usa",
-        autor: "Hunter S. Thompson",
+        frase : "Lector de codigo de barras",
+        pista: "Producto identificado",
         resuelto : false,
         puntuacionJugadorVelocidad: 0       
-    } ,
+    } ,        
     {
-        frase : "Haz el amor y no la guerra",
-        autor : "John Lennon",
+        frase: "Recepcion, Almacenamiento y Expedicion",
+        pista: "Almacen",
         resuelto : false,
         puntuacionJugadorVelocidad: 0
-    } ,
+    },
     {
-        frase : "El alma está en el cerebro",
-        autor: "Eduard Punset",
+        frase: "Kaisen, Kanban y 5S",
+        pista: "Metodologias de optimizacion",
         resuelto : false,
-        puntuacionJugadorVelocidad: 0         
-    } ,
-    {
-        frase : "El dinero no puede comprar la vida",
-        autor : "Bob Marley",
-        resuelto : false,
-        puntuacionJugadorVelocidad: 0  
-    } ,
-    {
-        frase : "Pienso luego existo",
-        autor : "René Descartes",
-        resuelto : false,
-        puntuacionJugadorVelocidad: 0  
-    } ,
-    {
-        frase : "Cada día sabemos más y entendemos menos",
-        autor : "Albert Einstein",
-        resuelto : false,
-        puntuacionJugadorVelocidad: 0  
-    } ,
-    {
-        frase : "Haz como si cada día fuese una vida",
-        autor : "Séneca",
-        resuelto : false,
-        puntuacionJugadorVelocidad: 0  
-    } ,
-    {
-        frase : "Lo que no puedo crear no lo entiendo",
-        autor : "Richard Feynman",
-        resuelto : false,
-        puntuacionJugadorVelocidad: 0  
-    } ,
-    {
-        frase : "Yo sólo sé que no sé nada",
-        autor : "Sócrates",
-        resuelto : false,
-        puntuacionJugadorVelocidad: 0  
-    } ,
-    {
-        frase : "Enamórate de tu existencia",
-        autor : "Jack Kerouac",
-        resuelto : false,
-        puntuacionJugadorVelocidad: 0  
+        puntuacionJugadorVelocidad: 0
     }
 ]
 
@@ -135,7 +93,7 @@ let textoArray = panelesCadena.join("");
 document.getElementById("texto").innerHTML = textoArray;
 
 // Mostramos la puntuación del jugador.
-document.getElementById("pista").innerHTML = panelesObjeto[panelAzar].autor;
+document.getElementById("pista").innerHTML = panelesObjeto[panelAzar].pista;
 document.getElementById("puntuacionJugadorVelocidad").innerHTML = panelesObjeto[panelAzar].puntuacionJugadorVelocidad + " €";
 
 // Para mostrar la fecha del día actual.

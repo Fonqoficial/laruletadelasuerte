@@ -61,11 +61,11 @@ if (jugadorUno.turno) {
     document.getElementById("jugadorDos").style.border = "2px solid #6a6d6f74";
 }
 
-// En eset array de objetos almacenamos cada panel de la ruleta. En ellos tenemos la frase, el autor, si está resuelto o no, las letras que se han introducido, y las puntuaciones de cada jugador en dicho panel.
+// En eset array de objetos almacenamos cada panel de la ruleta. En ellos tenemos la frase, el , si está resuelto o no, las letras que se han introducido, y las puntuaciones de cada jugador en dicho panel.
 let panelesObjeto = [
     {
-        frase : "La libertad muere si no se usa",
-        autor: "Hunter S. Thompson",
+        frase : "Lector de codigo de barras",
+        pista: "Producto identificado",
         resuelto : false,
         letrasIntroducidas : [],
         puntuacionJugadorUno : 0,
@@ -73,80 +73,18 @@ let panelesObjeto = [
         puntuacionJugadorTres : 0        
     } ,
     {
-        frase : "Haz el amor y no la guerra",
-        autor : "John Lennon",
+        frase: "Recepcion, Almacenamiento y Expedicion",
+        pista: "Almacen",
         resuelto : false,
         letrasIntroducidas : [],
         puntuacionJugadorUno : 0,
         puntuacionJugadorDos : 0,
         puntuacionJugadorTres : 0
-    } ,
+        
+    },
     {
-        frase : "El alma está en el cerebro",
-        autor: "Eduard Punset",
-        resuelto : false,
-        letrasIntroducidas : [],
-        puntuacionJugadorUno : 0,
-        puntuacionJugadorDos : 0,
-        puntuacionJugadorTres : 0        
-    } ,
-    {
-        frase : "El dinero no puede comprar la vida",
-        autor : "Bob Marley",
-        resuelto : false,
-        letrasIntroducidas : [],
-        puntuacionJugadorUno : 0,
-        puntuacionJugadorDos : 0,
-        puntuacionJugadorTres : 0
-    } ,
-    {
-        frase : "Pienso luego existo",
-        autor : "René Descartes",
-        resuelto : false,
-        letrasIntroducidas : [],
-        puntuacionJugadorUno : 0,
-        puntuacionJugadorDos : 0,
-        puntuacionJugadorTres : 0
-    } ,
-    {
-        frase : "Cada día sabemos más y entendemos menos",
-        autor : "Albert Einstein",
-        resuelto : false,
-        letrasIntroducidas : [],
-        puntuacionJugadorUno : 0,
-        puntuacionJugadorDos : 0,
-        puntuacionJugadorTres : 0
-    } ,
-    {
-        frase : "Haz como si cada día fuese una vida",
-        autor : "Séneca",
-        resuelto : false,
-        letrasIntroducidas : [],
-        puntuacionJugadorUno : 0,
-        puntuacionJugadorDos : 0,
-        puntuacionJugadorTres : 0
-    } ,
-    {
-        frase : "Lo que no puedo crear no lo entiendo",
-        autor : "Richard Feynman",
-        resuelto : false,
-        letrasIntroducidas : [],
-        puntuacionJugadorUno : 0,
-        puntuacionJugadorDos : 0,
-        puntuacionJugadorTres : 0
-    } ,
-    {
-        frase : "Yo sólo sé que no sé nada",
-        autor : "Sócrates",
-        resuelto : false,
-        letrasIntroducidas : [],
-        puntuacionJugadorUno : 0,
-        puntuacionJugadorDos : 0,
-        puntuacionJugadorTres : 0
-    } ,
-    {
-        frase : "Enamórate de tu existencia",
-        autor : "Jack Kerouac",
+        frase: "Kaisen, Kanban y 5S",
+        pista: "Metodologias de optimizacion",
         resuelto : false,
         letrasIntroducidas : [],
         puntuacionJugadorUno : 0,
@@ -201,7 +139,7 @@ for (let i = 0; i < panelesCadena.length; i++) {
 // Mostramos de esta forma el panel y su pista.
 let textoArray = panelesCadena.join("");
 document.getElementById("texto").innerHTML = textoArray;
-document.getElementById("pista").innerHTML = panelesObjeto[panelAzar].autor;
+document.getElementById("pista").innerHTML = panelesObjeto[panelAzar].pista;
 
 // Mostramos la puntuación de cada jugador.
 document.getElementById("puntuacionJugadorUno").innerHTML = panelesObjeto[panelAzar].puntuacionJugadorUno + " €";
@@ -548,7 +486,7 @@ function iniciar_otro_panel() {
         cadena = panelesObjeto[panelAzar].frase.toUpperCase();
         longitudCadena = cadena.length;
         
-        document.getElementById("pista").innerHTML = panelesObjeto[panelAzar].autor;
+        document.getElementById("pista").innerHTML = panelesObjeto[panelAzar].pista;
         document.getElementById("puntuacionJugadorUno").innerHTML = panelesObjeto[panelAzar].puntuacionJugadorUno + " €";
         document.getElementById("puntuacionJugadorDos").innerHTML = panelesObjeto[panelAzar].puntuacionJugadorDos + " €";
         document.getElementById("puntuacionJugadorTres").innerHTML = panelesObjeto[panelAzar].puntuacionJugadorTres + " €";
