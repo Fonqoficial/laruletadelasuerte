@@ -24,7 +24,8 @@ let acierto = false;
 let contadorLetra = 0;
 
 // En este array almacenamos los valores que tiene la ruleta.
-let ruleta = [0, 100, 200, "PIERDE TURNO", 400, 500, "QUIEBRA", 700, 800, 900];
+// ¡Actualizado para incluir COMODIN y COCHE!
+let ruleta = [0, 25, 50, 75, 100, 150, 200, 300, "PIERDE TURNO", 400, 500, "QUIEBRA", 700, 800, 900, 1000, "COMODIN", "COCHE"];
 
 // Creamos un objeto por cada jugador, donde almacenamos su puntuación general, y si es su turno o no.
 
@@ -32,18 +33,24 @@ let ruleta = [0, 100, 200, "PIERDE TURNO", 400, 500, "QUIEBRA", 700, 800, 900];
 let jugadorUno = {
     puntuacion : 0,
     turno: true,
+    tieneCoche: false, // ¡NUEVO! Controla si tiene el gajo COCHE
+    tieneComodin: false, // ¡NUEVO! Controla si tiene el gajo COMODIN
 };
 
 // Jugador dos.
 let jugadorDos = {
     puntuacion : 0,
     turno: false,
+    tieneCoche: false, // ¡NUEVO!
+    tieneComodin: false, // ¡NUEVO!
 };
 
 // Jugador tres.
 let jugadorTres = {
     puntuacion : 0,
     turno: false,
+    tieneCoche: false, // ¡NUEVO!
+    tieneComodin: false, // ¡NUEVO!
 };
 
 // Cuando es el turno de un jugador determinado, su card sobresalta al tener un borde más pronunciado que los otros dos.
@@ -212,15 +219,50 @@ function tira_ruleta() {
                 // De esta forma obtenemos el valor por el que vamos a jugar en esta tirada.
                 let codigo = Math.floor(Math.random() * ruleta.length); 
                 valor = ruleta[codigo]; 
-                if (valor != "PIERDE TURNO" && valor != "QUIEBRA") {
+                
+                // Gajos de dinero
+                if (typeof valor === 'number') {
                     // Se nos muestra el valor por el que vamos a jugar.
                     swal({
                         title: "Has caído en la casilla (" + valor + ")",
                         text: "Escribe una letra por: " + valor + "€",
                         icon: "info"
                     });
+                } 
+                // Gajo COMODIN
+                else if (valor == "COMODIN") {
+                    swal({
+                        title: "¡Has ganado un COMODÍN!",
+                        text: "Úsalo para no perder turno al fallar una consonante o para comprar una vocal gratis.",
+                        icon: "success"
+                    });
+                    // Asignar el comodín al jugador actual
+                    if (jugadorUno.turno) {
+                        jugadorUno.tieneComodin = true;
+                    } else if (jugadorDos.turno) {
+                        jugadorDos.tieneComodin = true;
+                    } else if (jugadorTres.turno) {
+                        jugadorTres.tieneComodin = true;
+                    }
                 }
-                if (valor == "PIERDE TURNO") {
+                // Gajo CERVEZA
+                else if (valor == "CERVEZA") {
+                    swal({
+                        title: "¡Has caído en el mejor premio!",
+                        text: "Si resuelves el panel, ¡te llevas una cervecita gratis (NIEVES PAGA)!",
+                        icon: "success"
+                    });
+                    // Asignar el gajo CERVEZA al jugador actual
+                    if (jugadorUno.turno) {
+                        jugadorUno.tieneCoche = true;
+                    } else if (jugadorDos.turno) {
+                        jugadorDos.tieneCoche = true;
+                    } else if (jugadorTres.turno) {
+                        jugadorTres.tieneCoche = true;
+                    }
+                }
+                // Gajo PIERDE TURNO
+                else if (valor == "PIERDE TURNO") {
                     // El jugador pierde el turno.
                     swal({
                         title: "Has caído en pierde turno",
@@ -229,7 +271,8 @@ function tira_ruleta() {
                     });
                     perder_turno();
                 }
-                if (valor == "QUIEBRA") {
+                // Gajo QUIEBRA
+                else if (valor == "QUIEBRA") {
                     // Si caemos en 'Bancarrota', nuestra puntuación en este panel pasa a ser 0, se nos indica así y perdemos turno.
                     if (jugadorUno.turno) {
                         panelesObjeto[panelAzar].puntuacionJugadorUno = 0;
@@ -286,6 +329,11 @@ function escribir_letra() {
             .then((letra) => {
                 let letraRepetida = false;
                 letra = letra.toUpperCase();
+                let jugadorActual; // Variable para simplificar la lógica del comodín
+
+                if (jugadorUno.turno) jugadorActual = jugadorUno;
+                else if (jugadorDos.turno) jugadorActual = jugadorDos;
+                else if (jugadorTres.turno) jugadorActual = jugadorTres;
         
                 // Comprobamos si la letra ya se ha introducido previamente.
                 for (let i = 0; i < panelesObjeto[panelAzar].letrasIntroducidas.length; i++) {
@@ -294,14 +342,23 @@ function escribir_letra() {
                     }
                 }
     
-                // Si se introduce una vocal, se perderá el turno.
+                // Si se introduce una vocal, se perderá el turno (a menos que tenga comodín)
                 if (letra == 'A' || letra == 'E' || letra == 'I' || letra == 'O' || letra == 'U') {
-                    swal({
-                        title: "Pierdes tu turno",
-                        text: "Las vocales sólo se pueden comprar.",
-                        icon: "error"
-                    });
-                    perder_turno();
+                    if (jugadorActual.tieneComodin) {
+                        swal({
+                            title: "¡COMODÍN usado!",
+                            text: "No puedes usar una vocal, pero tu Comodín te salva de perder el turno.",
+                            icon: "info"
+                        });
+                        jugadorActual.tieneComodin = false; // El comodín se gasta
+                    } else {
+                        swal({
+                            title: "Pierdes tu turno",
+                            text: "Las vocales sólo se pueden comprar.",
+                            icon: "error"
+                        });
+                        perder_turno();
+                    }
                 } else if (!letraRepetida) {
                     // De esta forma hacemos que la letra acertada se añada a nuestra cadena auxiliar.
                     for (let i = 0; i < longitudCadena; i++) {          
@@ -337,12 +394,23 @@ function escribir_letra() {
                         
                     // Si la letra no está contenida en el panel.
                     if (acierto == false) { 
-                        swal({
-                            title: "Has fallado",
-                            text: "La ''" + letra + "'' no está en el panel. Pierdes tu turno.",
-                            icon: "error"
-                        });               
-                        perder_turno();
+                        // Lógica del COMODÍN al fallar una consonante
+                        if (jugadorActual.tieneComodin) {
+                            swal({
+                                title: "¡COMODÍN usado!",
+                                text: "La ''" + letra + "'' no está. Tu Comodín evita que pierdas el turno.",
+                                icon: "info"
+                            });
+                            jugadorActual.tieneComodin = false; // El comodín se gasta
+                            ruletaTirada = true; // Permite tirar la ruleta de nuevo
+                        } else {
+                            swal({
+                                title: "Has fallado",
+                                text: "La ''" + letra + "'' no está en el panel. Pierdes tu turno.",
+                                icon: "error"
+                            });               
+                            perder_turno();
+                        }
                     } else {
                         contadorLetra = 0;
                         // Contamos las veces que aparece la letra acertada en el panel.
@@ -466,13 +534,29 @@ function resolver_panel() {
                     if (jugadorUno.turno) {
                         panelesObjeto[panelAzar].puntuacionJugadorUno += 500;
                         jugadorUno.puntuacion += panelesObjeto[panelAzar].puntuacionJugadorUno;
+                        // Lógica para el Gajo COCHE
+                        if (jugadorUno.tieneCoche) {
+                            swal({ title: "¡PREMIO CERVEZA!", text: "¡Has resuelto con el gajo Cerveza activo! ¡Te llevas una cervecita!", icon: "success" });
+                            jugadorUno.tieneCoche = false; 
+                        }
                     } else if (jugadorDos.turno) {
                         panelesObjeto[panelAzar].puntuacionJugadorDos += 500;
                         jugadorDos.puntuacion += panelesObjeto[panelAzar].puntuacionJugadorDos;
+                        // Lógica para el Gajo COCHE
+                        if (jugadorDos.tieneCoche) {
+                            swal({ title: "¡PREMIO CERVEZA!", text: "¡Has resuelto con el gajo Cerveza activo! ¡Te llevas una cervecita!", icon: "success" });
+                            jugadorDos.tieneCoche = false;
+                        }
                     } else if (jugadorTres.turno) {
                         panelesObjeto[panelAzar].puntuacionJugadorTres += 500;
                         jugadorTres.puntuacion += panelesObjeto[panelAzar].puntuacionJugadorTres;
+                        // Lógica para el Gajo COCHE
+                        if (jugadorTres.tieneCoche) {
+                            swal({ title: "¡PREMIO CERVEZA!", text: "¡Has resuelto con el gajo Cerveza activo! ¡Te llevas una cervecita!", icon: "success" });
+                            jugadorTres.tieneCoche = false;
+                        }
                     }
+                    
                     swal({
                         title: "Enhorabuena, ¡has resuelto el panel!",
                         text: "¡Has sumado 500€!",
@@ -653,181 +737,209 @@ function comprar_vocal() {
         document.getElementById("comprar").style.color = "#c2c4c7";
         document.getElementById("tirar").removeAttribute("style");
         document.getElementById("escribir").removeAttribute("style");
-        if (acierto) {
-            if (jugadorUno.turno && panelesObjeto[panelAzar].puntuacionJugadorUno >= 1000 || jugadorDos.turno && panelesObjeto[panelAzar].puntuacionJugadorDos >= 1000 || jugadorTres.turno && panelesObjeto[panelAzar].puntuacionJugadorTres >= 1000) {
-                letrasDeFrente = false;
-                letrasMostradas = 0;
-                compradoVocal = true;
-                vocalRepetida = false;
-                let aux = ""; 
-                let acierto = false;
-                // Pedimos la cadena al jugador.
-                swal({
-                    title: "Escribe una vocal",
-                    icon: "info",
-                    content: "input",
-                })
-                .then((vocal) => {
-                    vocal = vocal.toUpperCase();
-                    // Se comprueba si la vocal ya se ha introducido.
-                    for (let i = 0; i < panelesObjeto[panelAzar].letrasIntroducidas.length; i++) {
-                        if (vocal == panelesObjeto[panelAzar].letrasIntroducidas[i]) {
-                            vocalRepetida = true;
+
+        let jugadorActual;
+        if (jugadorUno.turno) jugadorActual = jugadorUno;
+        else if (jugadorDos.turno) jugadorActual = jugadorDos;
+        else if (jugadorTres.turno) jugadorActual = jugadorTres;
+        
+        // Verifica si tiene dinero SUFICIENTE o tiene el COMODÍN activo
+        const tieneDinero = (jugadorUno.turno && panelesObjeto[panelAzar].puntuacionJugadorUno >= 1000) || 
+                            (jugadorDos.turno && panelesObjeto[panelAzar].puntuacionJugadorDos >= 1000) || 
+                            (jugadorTres.turno && panelesObjeto[panelAzar].puntuacionJugadorTres >= 1000);
+
+        const comodinActivo = jugadorActual.tieneComodin;
+
+        if (acierto && (tieneDinero || comodinActivo)) {
+            
+            letrasDeFrente = false;
+            letrasMostradas = 0;
+            compradoVocal = true;
+            vocalRepetida = false;
+            let aux = ""; 
+            let acierto = false;
+            // Pedimos la cadena al jugador.
+            swal({
+                title: "Escribe una vocal",
+                icon: "info",
+                content: "input",
+            })
+            .then((vocal) => {
+                vocal = vocal.toUpperCase();
+                // Se comprueba si la vocal ya se ha introducido.
+                for (let i = 0; i < panelesObjeto[panelAzar].letrasIntroducidas.length; i++) {
+                    if (vocal == panelesObjeto[panelAzar].letrasIntroducidas[i]) {
+                        vocalRepetida = true;
+                    }
+                }
+                // Se genera un nuevo panel con las vocales que se aciertan, para que se les dé la vuelta.
+                if (!vocalRepetida && (vocal == "A" || vocal == "E" || vocal == "I" || vocal == "O" || vocal == "U")) {
+                    contadorLetra = 0;
+                    for (let i = 0; i < longitudCadena; i++) { 
+                        if (cadenaAuxiliar.charAt(i) == vocal) { 
+                            aux = aux + vocal; 
+                            acierto = true; 
+                        } else if (cadenaAuxiliar.charAt(i) == " ") { 
+                            aux = aux + " "; 
+                        } else if (vocal == "A" && cadenaAuxiliar.charAt(i) == "Á") {
+                            aux = aux + "Á";
+                            acierto = true;
+                            contadorLetra++;
+                            panelesCadena[i] = "<div id='" + i + "' class='letraAcertada' onclick='darLaVuelta(this.id)'>" + cadenaAuxiliar.charAt(i)  + "</div>";
+                            panelesObjeto[panelAzar].letrasIntroducidas.push(vocal);
+                        } else if (vocal == "E" && cadenaAuxiliar.charAt(i) == "É") {
+                            aux = aux + "É";
+                            acierto = true;
+                            contadorLetra++;
+                            panelesCadena[i] = "<div id='" + i + "' class='letraAcertada' onclick='darLaVuelta(this.id)'>" + cadenaAuxiliar.charAt(i)  + "</div>";
+                            panelesObjeto[panelAzar].letrasIntroducidas.push(vocal);
+                        } else if (vocal == "I" && cadenaAuxiliar.charAt(i) == "Í") {
+                            aux = aux + "Í";
+                            acierto = true;
+                            contadorLetra++;
+                            panelesCadena[i] = "<div id='" + i + "' class='letraAcertada' onclick='darLaVuelta(this.id)'>" + cadenaAuxiliar.charAt(i)  + "</div>";
+                            panelesObjeto[panelAzar].letrasIntroducidas.push(vocal);
+                        } else if (vocal == "O" && cadenaAuxiliar.charAt(i) == "Ó") {
+                            aux = aux + "Ó";
+                            acierto = true;
+                            contadorLetra++;
+                            panelesCadena[i] = "<div id='" + i + "' class='letraAcertada' onclick='darLaVuelta(this.id)'>" + cadenaAuxiliar.charAt(i)  + "</div>";
+                            panelesObjeto[panelAzar].letrasIntroducidas.push(vocal);
+                        } else if (vocal == "U" && cadenaAuxiliar.charAt(i) == "Ú") { // Nota: Corregí "Á" por "Ú" aquí
+                            aux = aux + "Ú";
+                            acierto = true;
+                            contadorLetra++;
+                            panelesCadena[i] = "<div id='" + i + "' class='letraAcertada' onclick='darLaVuelta(this.id)'>" + cadenaAuxiliar.charAt(i)  + "</div>";
+                            panelesObjeto[panelAzar].letrasIntroducidas.push(vocal);
+                        } else {
+                            aux = aux + nuevaCadena.charAt(i);
                         }
                     }
-                    // Se genera un nuevo panel con las vocales que se aciertan, para que se les dé la vuelta.
-                    if (!vocalRepetida && (vocal == "A" || vocal == "E" || vocal == "I" || vocal == "O" || vocal == "U")) {
-                        contadorLetra = 0;
-                        for (let i = 0; i < longitudCadena; i++) { 
-                            if (cadenaAuxiliar.charAt(i) == vocal) { 
-                                aux = aux + vocal; 
-                                acierto = true; 
-                            } else if (cadenaAuxiliar.charAt(i) == " ") { 
-                                aux = aux + " "; 
-                            } else if (vocal == "A" && cadenaAuxiliar.charAt(i) == "Á") {
-                                aux = aux + "Á";
-                                acierto = true;
-                                contadorLetra++;
-                                panelesCadena[i] = "<div id='" + i + "' class='letraAcertada' onclick='darLaVuelta(this.id)'>" + cadenaAuxiliar.charAt(i)  + "</div>";
+        
+                    contadorEspacios = 0;
+                    for (let i = 0; i < panelesCadena.length; i++) {
+                        if (aux.charAt(i) != " " && aux.charAt(i) != "?" && aux.charAt(i) == vocal) {
+                            panelesCadena[i] = "<div id='" + i + "' class='letraAcertada' onclick='darLaVuelta(this.id)'>" + cadenaAuxiliar.charAt(i)  + "</div>";
+                            // Se añade al array de letras introducidas SÓLO si es la primera vez que se pone la vocal
+                            if (!panelesObjeto[panelAzar].letrasIntroducidas.includes(vocal)) {
                                 panelesObjeto[panelAzar].letrasIntroducidas.push(vocal);
-                            } else if (vocal == "E" && cadenaAuxiliar.charAt(i) == "É") {
-                                aux = aux + "É";
-                                acierto = true;
-                                contadorLetra++;
-                                panelesCadena[i] = "<div id='" + i + "' class='letraAcertada' onclick='darLaVuelta(this.id)'>" + cadenaAuxiliar.charAt(i)  + "</div>";
-                                panelesObjeto[panelAzar].letrasIntroducidas.push(vocal);
-                            } else if (vocal == "I" && cadenaAuxiliar.charAt(i) == "Í") {
-                                aux = aux + "Í";
-                                acierto = true;
-                                contadorLetra++;
-                                panelesCadena[i] = "<div id='" + i + "' class='letraAcertada' onclick='darLaVuelta(this.id)'>" + cadenaAuxiliar.charAt(i)  + "</div>";
-                                panelesObjeto[panelAzar].letrasIntroducidas.push(vocal);
-                            } else if (vocal == "O" && cadenaAuxiliar.charAt(i) == "Ó") {
-                                aux = aux + "Ó";
-                                acierto = true;
-                                contadorLetra++;
-                                panelesCadena[i] = "<div id='" + i + "' class='letraAcertada' onclick='darLaVuelta(this.id)'>" + cadenaAuxiliar.charAt(i)  + "</div>";
-                                panelesObjeto[panelAzar].letrasIntroducidas.push(vocal);
-                            } else if (vocal == "U" && cadenaAuxiliar.charAt(i) == "Á") {
-                                aux = aux + "Ú";
-                                acierto = true;
-                                contadorLetra++;
-                                panelesCadena[i] = "<div id='" + i + "' class='letraAcertada' onclick='darLaVuelta(this.id)'>" + cadenaAuxiliar.charAt(i)  + "</div>";
-                                panelesObjeto[panelAzar].letrasIntroducidas.push(vocal);
-                            } else {
-                                aux = aux + nuevaCadena.charAt(i);
                             }
+                        } else if (aux.charAt(i) != " " && aux.charAt(i) != "?" && !panelesCadena[i].search('frente')) {
+                            panelesCadena[i] = "<div class='letraReves'>" + aux.charAt(i)  + "</div>";                        
+                        } else if (aux.charAt(i) === " ") {
+                            panelesCadena[i] = "</div><div class='espacio'>-</div><div class='palabra'>";
+                            contadorEspacios++;
                         }
-            
-                        contadorEspacios = 0;
-                        for (let i = 0; i < panelesCadena.length; i++) {
-                            if (aux.charAt(i) != " " && aux.charAt(i) != "?" && aux.charAt(i) == vocal) {
-                                panelesCadena[i] = "<div id='" + i + "' class='letraAcertada' onclick='darLaVuelta(this.id)'>" + cadenaAuxiliar.charAt(i)  + "</div>";
-                                panelesObjeto[panelAzar].letrasIntroducidas.push(vocal);
-                            } else if (aux.charAt(i) != " " && aux.charAt(i) != "?" && !panelesCadena[i].search('frente')) {
-                                panelesCadena[i] = "<div class='letraReves'>" + aux.charAt(i)  + "</div>";                        
-                            } else if (aux.charAt(i) === " ") {
-                                panelesCadena[i] = "</div><div class='espacio'>-</div><div class='palabra'>";
-                                contadorEspacios++;
-                            }
-                            if (contadorEspacios == 3) {
-                                panelesCadena[i] += "<br>";
-                                contadorEspacios = 0;
-                            }
+                        if (contadorEspacios == 3) {
+                            panelesCadena[i] += "<br>";
+                            contadorEspacios = 0;
                         }
-            
-                        textoArray = panelesCadena.join("");
-                        document.getElementById("texto").innerHTML = textoArray;
-                            
-                        // Una vez acabo de recorrer la cadena completa para saber si mi letra estaba o no.
-                        if (acierto == false) { // Si no está la letra muestro el mensaje correspondiente.
-                            swal({
-                                title: "Has fallado",
-                                text: "La ''" + vocal + "'' no está en el panel. Pierdes tu turno.",
-                                icon: "error"
-                            });                
-                            perder_turno();
-                        } else {
-                            // Se cuentan las vocales acertadas.
-                            for (let i = 0; i < cadena.length; i++) {
-                                if (cadena[i] == vocal) {
-                                    contadorLetra++;
-                                }
-                            }
-                            // Se resta la cantidad de dinero corrspondiente por el número de vocales acertadas.
-                            if (jugadorUno.turno) {
-                                panelesObjeto[panelAzar].puntuacionJugadorUno = panelesObjeto[panelAzar].puntuacionJugadorUno - (50 * contadorLetra);
-                            } else if (jugadorDos.turno) {
-                                panelesObjeto[panelAzar].puntuacionJugadorDos = panelesObjeto[panelAzar].puntuacionJugadorDos - (50 * contadorLetra);
-                            } else if (jugadorTres.turno) {
-                                panelesObjeto[panelAzar].puntuacionJugadorTres = panelesObjeto[panelAzar].puntuacionJugadorTres - (50 * contadorLetra);
-                            }
-    
-                            // Se muestra un mensaje indicando que se ha acertado y la cantidad de dinero que se pierde.
-                            swal({
-                                title: "Has acertado",
-                                text: "La ''" + vocal + "'' está en el panel " + contadorLetra + " veces.\nSe te han restado " + (50 * contadorLetra) + "€  (50€ x " + contadorLetra + ")",
-                                icon: "success"
-                            });
-    
-                            // Se actualizan las puntuaciones de los jugadores.
-                            document.getElementById("puntuacionJugadorUno").innerHTML = panelesObjeto[panelAzar].puntuacionJugadorUno + " €";
-                            document.getElementById("puntuacionJugadorDos").innerHTML = panelesObjeto[panelAzar].puntuacionJugadorDos + " €";
-                            document.getElementById("puntuacionJugadorTres").innerHTML = panelesObjeto[panelAzar].puntuacionJugadorTres + " €";
-                        }
-                
-                        textoArray = panelesCadena.join("");
-                        document.getElementById("texto").innerHTML = textoArray;
-                
-                        let numero_interrogantes = 0;
-                        for (let i = 0; i < longitudCadena; i++) {
-                            if (aux.charAt(i) == "?") {
-                                numero_interrogantes++;
-                            }
-                        }
-                        if (numero_interrogantes == 0) {
-                            completo = true;
-                            swal({
-                                title: "Enhorabuena, ¡has resuelto el panel!",
-                                text: "¡Has sumado 500€!",
-                                icon: "success"
-                            });
-                            panelesObjeto[panelAzar].resuelto = true;
-                        }
-                    } else if (vocal != "A" && vocal != "E" && vocal && "I" && vocal != "O" && vocal != "U"){
-                        // Si se introduce una consonante.
+                    }
+        
+                    textoArray = panelesCadena.join("");
+                    document.getElementById("texto").innerHTML = textoArray;
+                        
+                    // Una vez acabo de recorrer la cadena completa para saber si mi letra estaba o no.
+                    if (acierto == false) { // Si no está la letra muestro el mensaje correspondiente.
+                        // El comodín NO salva si se compra vocal y se falla (regla del juego original)
                         swal({
                             title: "Has fallado",
-                            text: "La letra que has introducido no es una vocal. Pierdes tu turno.",
+                            text: "La ''" + vocal + "'' no está en el panel. Pierdes tu turno.",
                             icon: "error"
-                        });
-                        perder_turno(); 
-                    } else {
-                        // Si la vocal introducida ya está en el panel.
-                        swal({
-                            title: "Has fallado",
-                            text: "La letra que has introducido ya está en el panel. Pierdes tu turno.",
-                            icon: "error"
-                        });
+                        });                
                         perder_turno();
-                    } 
-                });
-            } else {
-                // Si no se tiene suficiente dinero para comprar vocales.
-                swal({
-                    title: "No puedes comprar vocales",
-                    text: "Debes tener 1000€ acumulados en este panel.",
-                    icon: "info"
-                });
-                letrasDeFrente = true;
-            }
+                    } else {
+                        // Se cuentan las vocales acertadas.
+                        for (let i = 0; i < cadena.length; i++) {
+                            if (cadena[i] == vocal) {
+                                contadorLetra++;
+                            }
+                        }
+
+                        let coste = 50 * contadorLetra;
+                        let mensajeGasto = "";
+
+                        // Se resta la cantidad de dinero corrspondiente (o se usa comodín)
+                        if (comodinActivo) {
+                            // Uso el comodín en lugar de gastar dinero
+                            jugadorActual.tieneComodin = false; // Gasto el comodín
+                            mensajeGasto = "Tu COMODÍN te ha permitido comprar esta vocal GRATIS.";
+                        } else {
+                            // Gasto dinero
+                            if (jugadorUno.turno) {
+                                panelesObjeto[panelAzar].puntuacionJugadorUno -= coste;
+                            } else if (jugadorDos.turno) {
+                                panelesObjeto[panelAzar].puntuacionJugadorDos -= coste;
+                            } else if (jugadorTres.turno) {
+                                panelesObjeto[panelAzar].puntuacionJugadorTres -= coste;
+                            }
+                            mensajeGasto = `Se te han restado ${coste}€ (50€ x ${contadorLetra}).`;
+                        }
+
+                        // Se muestra un mensaje indicando que se ha acertado y la cantidad de dinero que se pierde.
+                        swal({
+                            title: "Has acertado",
+                            text: `La ''${vocal}'' está en el panel ${contadorLetra} veces.\n${mensajeGasto}`,
+                            icon: "success"
+                        });
+
+                        // Se actualizan las puntuaciones de los jugadores.
+                        document.getElementById("puntuacionJugadorUno").innerHTML = panelesObjeto[panelAzar].puntuacionJugadorUno + " €";
+                        document.getElementById("puntuacionJugadorDos").innerHTML = panelesObjeto[panelAzar].puntuacionJugadorDos + " €";
+                        document.getElementById("puntuacionJugadorTres").innerHTML = panelesObjeto[panelAzar].puntuacionJugadorTres + " €";
+                    }
+            
+                    textoArray = panelesCadena.join("");
+                    document.getElementById("texto").innerHTML = textoArray;
+            
+                    let numero_interrogantes = 0;
+                    for (let i = 0; i < longitudCadena; i++) {
+                        if (aux.charAt(i) == "?") {
+                            numero_interrogantes++;
+                        }
+                    }
+                    if (numero_interrogantes == 0) {
+                        completo = true;
+                        swal({
+                            title: "Enhorabuena, ¡has resuelto el panel!",
+                            text: "¡Has sumado 500€!",
+                            icon: "success"
+                        });
+                        panelesObjeto[panelAzar].resuelto = true;
+                    }
+                } else if (vocal != "A" && vocal != "E" && vocal && "I" && vocal != "O" && vocal != "U"){
+                    // Si se introduce una consonante.
+                    swal({
+                        title: "Has fallado",
+                        text: "La letra que has introducido no es una vocal. Pierdes tu turno.",
+                        icon: "error"
+                    });
+                    perder_turno(); 
+                } else {
+                    // Si la vocal introducida ya está en el panel.
+                    swal({
+                        title: "Has fallado",
+                        text: "La letra que has introducido ya está en el panel. Pierdes tu turno.",
+                        icon: "error"
+                    });
+                    perder_turno();
+                } 
+            });
         } else {
-            letrasDeFrente = true;
+            // Si no se tiene suficiente dinero para comprar vocales O no se ha acertado una letra
+            let mensaje;
+            if (!acierto) {
+                 mensaje = "Se debe acertar una letra antes de comprar vocal.";
+            } else if (!tieneDinero && !comodinActivo) {
+                 mensaje = "Debes tener 1000€ acumulados en este panel para comprar vocales (o el Comodín).";
+            }
+
             swal({
-                title: "No puedes hacer esto",
-                text: "Se debe acertar una letra antes de comprar vocal.",
+                title: "No puedes comprar vocales",
+                text: mensaje,
                 icon: "info"
             });
+            letrasDeFrente = true;
         }
     } else {
         swal({
