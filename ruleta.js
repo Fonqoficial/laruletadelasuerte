@@ -119,7 +119,18 @@ let panelesObjeto = [
         puntuacionJugadorDos : 0,
         puntuacionJugadorTres : 0
     }
-]
+];
+
+// Cargar paneles adicionales desde localStorage (agregados desde el panel de admin)
+const panelesDelStorage = localStorage.getItem('panelesRuleta');
+if (panelesDelStorage) {
+    try {
+        const panelesAdicionales = JSON.parse(panelesDelStorage);
+        panelesObjeto = panelesObjeto.concat(panelesAdicionales);
+    } catch (e) {
+        console.error('Error al cargar paneles del almacenamiento:', e);
+    }
+}
 
 // De esta manera, cada vez que se inicia una partida o se comienza un nuevo panel, éste se genera de forma aleatoria.
 let panelAzar = Math.floor(Math.random() * panelesObjeto.length);
