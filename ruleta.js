@@ -71,55 +71,8 @@ if (jugadorUno.turno) {
 // En eset array de objetos almacenamos cada panel de la ruleta. En ellos tenemos la frase, el , si está resuelto o no, las letras que se han introducido, y las puntuaciones de cada jugador en dicho panel.
 let panelesObjeto = [
     {
-        frase : "Lector de codigo de barras",
-        pista: "Producto identificado",
-        resuelto : false,
-        letrasIntroducidas : [],
-        puntuacionJugadorUno : 0,
-        puntuacionJugadorDos : 0,
-        puntuacionJugadorTres : 0        
-    } ,
-    {
-        frase: "Recepcion Almacenamiento y Expedicion",
-        pista: "Almacen",
-        resuelto : false,
-        letrasIntroducidas : [],
-        puntuacionJugadorUno : 0,
-        puntuacionJugadorDos : 0,
-        puntuacionJugadorTres : 0
-        
-    },
-    {
-        frase: "Kaisen Kanban y 5S",
-        pista: "Metodologias de optimizacion",
-        resuelto : false,
-        letrasIntroducidas : [],
-        puntuacionJugadorUno : 0,
-        puntuacionJugadorDos : 0,
-        puntuacionJugadorTres : 0
-    },
-    {
-        frase: "Cross docking Centralizado y Regional",
-        pista: "Tipos de almacen",
-        resuelto : false,
-        letrasIntroducidas : [],
-        puntuacionJugadorUno : 0,
-        puntuacionJugadorDos : 0,
-        puntuacionJugadorTres : 0
-    },
-    {
-        frase: "cobertura obsolescancia y ruptura de stock",
-        pista: "indicadores de almacen",
-        resuelto : false,
-        letrasIntroducidas : [],
-        puntuacionJugadorUno : 0,
-        puntuacionJugadorDos : 0,
-        puntuacionJugadorTres : 0
-    },
-
-    {
-        frase: "terrestres aereos y multimodales",
-        pista: "tipos de transporte",
+        frase: "la mejor charanga de españa",
+        pista: "Musica",
         resuelto : false,
         letrasIntroducidas : [],
         puntuacionJugadorUno : 0,
