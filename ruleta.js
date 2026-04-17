@@ -46,13 +46,13 @@ let jugadorDos = {
 };
 
 // Jugador tres.
-let jugadorTres = {
+/*let jugadorTres = {
     puntuacion : 0,
     turno: false,
     tieneCoche: false, // ¡NUEVO!
     tieneComodin: false, // ¡NUEVO!
 };
-
+*/
 // Cuando es el turno de un jugador determinado, su card sobresalta al tener un borde más pronunciado que los otros dos.
 if (jugadorUno.turno) {
     document.getElementById("jugadorUno").style.border = "5px solid #0d60c7";
