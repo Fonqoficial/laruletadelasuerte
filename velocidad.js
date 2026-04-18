@@ -29,23 +29,11 @@ document.getElementById("jugadorVelocidad").style.border = "5px solid #00b138";
 // En eset array de objetos almacenamos cada panel de la ruleta. En ellos tenemos la frase, el , si está resuelto o no, las letras que se han introducido, y las puntuaciones de cada jugador en dicho panel.
 let panelesObjeto = [
     {
-        frase : "Lector de codigo de barras",
-        pista: "Producto identificado",
+        frase : "El personaje mas odiado de Valorant es Neon",
+        pista: "Videojuego",
         resuelto : false,
         puntuacionJugadorVelocidad: 0       
     } ,        
-    {
-        frase: "Recepcion, Almacenamiento y Expedicion",
-        pista: "Almacen",
-        resuelto : false,
-        puntuacionJugadorVelocidad: 0
-    },
-    {
-        frase: "Kaisen, Kanban y 5S",
-        pista: "Metodologias de optimizacion",
-        resuelto : false,
-        puntuacionJugadorVelocidad: 0
-    }
 ]
 
 // De esta manera, cada vez que se inicia una partida o se comienza un nuevo panel, éste se genera de forma aleatoria.
